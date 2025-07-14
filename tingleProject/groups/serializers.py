@@ -9,12 +9,12 @@ User = get_user_model()
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['username', 'email']
 
 class ProjectSerializer(ModelSerializer):
     class Meta:
         model = Post
-        fields = ['id', 'title', 'project_type', 'project_field']
+        fields = ['id', 'title', 'project_type', 'project_field', 'target']
 
 class BaseTeamProjectInfoSerializer(ModelSerializer):
     project_type = SerializerMethodField()
@@ -41,17 +41,18 @@ class TeamMemberSerializer(ModelSerializer):
     
     class Meta:
         model = TeamMember
-        fields = ['id', 'team', 'user', 'user_id']
-        read_only_fields = ['id', 'team']
+        fields = ['user', 'user_id']
+        # read_only_fields = ['id', 'team'] 
+        # id, team 필드 제거 
 
 
 class TeamSerializer(BaseTeamProjectInfoSerializer):
     project = ProjectSerializer(read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        queryset=Post.objects.all(),
-        source='project',
-        write_only=True  # 요청 시만 사용 (입력 전용)
-    )
+    # project_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Post.objects.all(),
+    #     source='project',
+    #     write_only=True  # 요청 시만 사용 (입력 전용)
+    # ) 응답에서 중복으로 나오니까 제거 
 
     target = SerializerMethodField()
     members = TeamMemberSerializer(many=True, read_only=True)  # 중첩 serializer 사용
@@ -59,23 +60,24 @@ class TeamSerializer(BaseTeamProjectInfoSerializer):
 
     class Meta:
         model = Team # Group 모델을 참조
-        fields = ['id', 'name', 'project', 'project_id', 'project_type', 'project_field', 'target', 'part', 'description', 'members', 'progress', 'created_by']
+        fields = ['id', 'name', 'project', 'part', 'description', 'members', 'progress', 'created_by']
+        # 'project_id', 'project_type', 'project_field', 'target' 제거
         read_only_fields = ['id', 'status', 'created_by'] 
 
-    
-    def get_target(self, obj):
-        if obj.project:
-            return obj.project.target
-        return None
-
+    # target 제거
+    # def get_target(self, obj):
+    #     if obj.project:
+    #         return obj.project.target
+    #     return None 
 
 
 class TeamListSerializer(BaseTeamProjectInfoSerializer):
     project = ProjectSerializer(read_only=True)
+    created_by = serializers.CharField(source='created_by.username', read_only=True)
 
     class Meta:
         model = Team
-        fields = ['id', 'name', 'project', 'project_type', 'project_field', 'created_by']
+        fields = ['id', 'name', 'project', 'created_by']
         read_only_fields = ['id', 'status']
 
 #댓글
@@ -95,5 +97,5 @@ class TeamBookmarkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TeamBookmark
-        fields = ['id', 'user', 'team', 'team_id']
-        read_only_fields = ['id', 'user', 'team']
+        fields = ['team_id']
+        # read_only_fields = ['id', 'user', 'team']

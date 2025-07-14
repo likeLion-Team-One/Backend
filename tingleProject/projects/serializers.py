@@ -1,9 +1,10 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import Post, Comment, ProjectBookmark
+from accounts.serializers import UserSerializer
 
 class PostSerializer(ModelSerializer):
-    
+    created_by = serializers.CharField(source='created_by.username', read_only=True)
     class Meta:
         model = Post
         fields = '__all__'
@@ -18,13 +19,15 @@ class CommentSerializer(ModelSerializer):
 
 
 class ProjectBookmarkSerializer(ModelSerializer):
+    post = serializers.PrimaryKeyRelatedField(read_only=True)
+
     post_id = serializers.PrimaryKeyRelatedField(
         queryset=Post.objects.all(),
-        source='post',        # 내부에서는 post 필드로 매핑
-        write_only=True       # 입력 시에만 쓰고, 출력에는 안 보임
+        source='post',
+        write_only=True
     )
+
     class Meta:
         model = ProjectBookmark
-        fields = ['id', 'user', 'post', 'post_id']
-        read_only_fields = ['id', 'user', 'post']
+        fields = ['post', 'post_id']
 
