@@ -12,7 +12,8 @@ class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        queryset = Post.objects.filter(created_by = self.request.user)
+        # queryset = Post.objects.filter(created_by = self.request.user)
+        queryset = Post.objects.filter() # 전체 가져오기 
         status = self.request.query_params.get('status')
         if status:
             queryset = queryset.filter(status=status)

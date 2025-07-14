@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import TeamSerializer, TeamListSerializer, TeamMemberSerializer, CommentSerializer, TeamBookmarkSerializer
-from .models import Team, TeamMember, Comment, TeamBookmark
+from .serializers import *
+from .models import *
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -76,7 +76,6 @@ class TeamViewSet(ModelViewSet):
 
         return Response({'detail': '진행률이 수정되었습니다.'}, status=status.HTTP_200_OK)
         
-
 
 class TeamMemberViewSet(ModelViewSet):
     queryset = TeamMember.objects.all()

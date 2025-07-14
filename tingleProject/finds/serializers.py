@@ -3,15 +3,11 @@ from my.models import MyProfile
 
 # 사용자 리스트
 class FindsUserListSerializer(serializers.ModelSerializer):
-    total_user = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
 
     class Meta:
        model = MyProfile
-       fields = ['id', 'name', 'job', 'total_user', 'is_bookmarked']
-
-    def get_total_user(self, obj):
-        return MyProfile.objects.exclude(user=self.context['request'].user).count()
+       fields = ['id', 'name', 'job', 'is_bookmarked']
 
     def get_is_bookmarked(self, obj):
         user = self.context['request'].user
@@ -27,5 +23,5 @@ class FindUserDetailSerializer(serializers.ModelSerializer):
     
     def get_is_bookmarked(self, obj):
         user = self.context['request'].user
-        return obj.bookmarks_by.filter(user=user).exist()
+        return obj.bookmarks_by.filter(user=user).exists()
 

@@ -20,6 +20,15 @@ class FindUserViewSet(viewsets.ReadOnlyModelViewSet):
             return FindUserDetailSerializer
         return FindsUserListSerializer
     
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True, context={'request': request})
+        total_users = queryset.count()
+        return Response({
+            "total_users": total_users,
+            "profiles": serializer.data
+        })
+    
     # 그룹추가
     @action(detail=True, methods=['post'])
     def add_to_team(self, request, pk=None):
