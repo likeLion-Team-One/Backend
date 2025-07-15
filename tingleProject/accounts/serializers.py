@@ -1,14 +1,13 @@
 import string
-from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import ModelSerializer, ValidationError, CharField
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import CustomUser
+from rest_framework.validators import UniqueValidator
 
 class UserSerializer(ModelSerializer): 
-    # 중복아이디 검사
-    def validate_username(self, value):
-        if CustomUser.objects.filter(username=value).exists():
-            raise ValidationError('중복된 아이디입니다.')
-        return value
+    username = CharField(
+        validators=[UniqueValidator(queryset=CustomUser.objects.all(), message='중복된 아이디입니다.')]
+    )
     
     # 비밀번호 유효성 검사
     def validate_password(self, value):
