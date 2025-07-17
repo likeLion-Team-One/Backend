@@ -48,20 +48,20 @@ class TeamMemberSerializer(ModelSerializer):
 
 class TeamSerializer(BaseTeamProjectInfoSerializer):
     project = ProjectSerializer(read_only=True)
-    # project_id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Post.objects.all(),
-    #     source='project',
-    #     write_only=True  # 요청 시만 사용 (입력 전용)
-    # ) 응답에서 중복으로 나오니까 제거 
+    project_id = serializers.PrimaryKeyRelatedField(
+        queryset=Post.objects.all(),
+        source='project',
+        write_only=True  # 요청 시만 사용 (입력 전용)
+    ) 
 
-    target = SerializerMethodField()
+    # target = SerializerMethodField()
     members = TeamMemberSerializer(many=True, read_only=True)  # 중첩 serializer 사용
     created_by = serializers.CharField(source='created_by.username', read_only=True)
 
     class Meta:
         model = Team # Group 모델을 참조
-        fields = ['id', 'name', 'project', 'part', 'description', 'members', 'progress', 'created_by']
-        # 'project_id', 'project_type', 'project_field', 'target' 제거
+        fields = ['id', 'name', 'project', 'project_id', 'part', 'description', 'members', 'progress', 'created_by']
+        # 'project_type', 'project_field', 'target' 제거
         read_only_fields = ['id', 'status', 'created_by'] 
 
     # target 제거
@@ -94,8 +94,9 @@ class TeamBookmarkSerializer(serializers.ModelSerializer):
         source='team',
         write_only=True
     )
+    team = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = TeamBookmark
-        fields = ['team_id']
+        fields = ['team', 'team_id']
         # read_only_fields = ['id', 'user', 'team']
