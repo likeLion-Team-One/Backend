@@ -16,7 +16,7 @@ class FindUserViewSet(viewsets.ReadOnlyModelViewSet):
         return MyProfile.objects.exclude(user=self.request.user) # 조회 - 내 프로필 제외
     
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == 'retrieve': # 상세 조회일 때 
             return FindUserDetailSerializer
         return FindsUserListSerializer
     
@@ -55,6 +55,6 @@ class FindUserViewSet(viewsets.ReadOnlyModelViewSet):
     def bookmark_list(self, request, pk=None):
         profile = MyProfile.objects.filter(bookmarks_by__user=request.user)
         serializer = FindsUserListSerializer(profile, many=True, context={'request': request})
-        return Response({'count': profile.count(), 'results': serializer.data})
+        return Response({'count': profile.count(), 'bookmark_list': serializer.data})
 
 
