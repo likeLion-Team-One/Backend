@@ -77,8 +77,24 @@ class TeamListSerializer(BaseTeamProjectInfoSerializer):
 
     class Meta:
         model = Team
-        fields = ['id', 'name', 'project', 'created_by']
+        fields = ['id', 'name', 'project', 'progress','created_by']
         read_only_fields = ['id', 'status']
+
+# home(completed, progress)에서 보여줄 부분
+class HomeTeamSerializer(serializers.ModelSerializer):
+    created_by = serializers.CharField(source='created_by.username', read_only=True)
+
+    class Meta:
+        model = Team
+        fields = ['id', 'name', 'progress', 'created_by']
+        read_only_fields = ['id']
+
+# lates group
+class LatestTeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ['id', 'name', 'description']
+        read_only_fields = ['id']
 
 #댓글
 class CommentSerializer(ModelSerializer):

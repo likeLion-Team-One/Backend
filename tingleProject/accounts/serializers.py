@@ -30,7 +30,7 @@ class UserSerializer(ModelSerializer):
         #     'password': {'write_only': True},
         # }
 
-# 사용자이름
+# JWT 토큰 생성 시 사용자이름 추가
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
