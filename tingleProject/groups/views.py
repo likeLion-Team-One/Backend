@@ -75,7 +75,17 @@ class TeamViewSet(ModelViewSet):
         team.save()
 
         return Response({'detail': '진행률이 수정되었습니다.'}, status=status.HTTP_200_OK)
-        
+    
+    # 내 그룹
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def my_groups(self, request):
+        user = request.user # 사용자
+        # 내 그룹만 보여주기
+        teams = Team.objects.filter(members__user=user).distinct()
+        # 직렬화
+        serializers = MyTeamSerializer(teams, many=True)
+        return Response(serializers.data)
+
 
 class TeamMemberViewSet(ModelViewSet):
     queryset = TeamMember.objects.all()

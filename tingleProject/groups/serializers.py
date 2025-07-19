@@ -96,6 +96,15 @@ class LatestTeamSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description']
         read_only_fields = ['id']
 
+# 내 그룹 보여주기
+class MyTeamSerializer(serializers.ModelSerializer):
+    total_member = serializers.SerializerMethodField()
+    class Meta:
+        model = Team
+        fields = ['id', 'name', 'total_member']
+    def get_total_member(self, obj):
+        return obj.members.count()
+
 #댓글
 class CommentSerializer(ModelSerializer):
     class Meta:
