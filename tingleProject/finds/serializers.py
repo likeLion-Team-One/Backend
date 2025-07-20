@@ -7,7 +7,7 @@ class FindsUserListSerializer(serializers.ModelSerializer):
 
     class Meta:
        model = MyProfile
-       fields = ['name', 'job', 'is_bookmarked']
+       fields = ['id', 'name', 'job', 'is_bookmarked']
 
     def get_is_bookmarked(self, obj):
         user = self.context['request'].user
